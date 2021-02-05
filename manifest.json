@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "steam-ws-collection-manager",
+  "version": "1.0",
+
+  "permissions": [
+    "*://steamcommunity.com/*",
+    "cookies"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://steamcommunity.com/sharedfiles/filedetails/*"],
+      "js": ["content-script.js"]
+    }
+  ],
+  "background": {
+    "scripts": ["background-script.js"]
+  }
+}
