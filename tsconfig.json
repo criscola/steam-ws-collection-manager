@@ -1,11 +1,15 @@
 {
   "extends": "@sindresorhus/tsconfig",
   "compilerOptions": {
-	"target": "esnext",
+	"target": "es2018",
 	"declaration": false,
-	"noImplicitAny": true,
+	"noImplicitAny": false,
+	"allowUnusedLabels": true
   },
   "include": [
 	"source"
-  ]
+  ],
+  "rules": {
+	"no-unused-vars": "off"
+  }
 }
