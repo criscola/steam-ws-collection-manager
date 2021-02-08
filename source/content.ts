@@ -36,7 +36,29 @@ class WorkshopItem {
  */
 class Parser {
 	static parseSingleItem(doc: Document): WorkshopItem | null {
-		// Get category
+		const categories = this.getCategories(doc);
+		const description = this.getDescription(doc);
+		const subscribed = this.getSubscribed(doc);
+		if (subscribed === null) {
+			console.error("subscribed cannot be null");
+			return null;
+		}
+
+		// TODO: DEBUG
+		console.log("category: " + categories);
+		console.log("description: " + description);
+		console.log("subscribed: " + subscribed);
+
+		return new WorkshopItem(description, categories, subscribed);
+	}
+	/*
+	static parseCollection(doc: Document): WorkshopItem[] | null {
+		doc
+		return null;
+	}*/
+
+	// If no categories are defined, return null. If no source of the categories if found, return undefined.
+	private static getCategories(doc: Document): string[] | null {
 		const category = doc.querySelector(categoryClassName);
 		if (category === null) {
 			console.error("cannot find category");
@@ -44,30 +66,26 @@ class Parser {
 		}
 
 		// If split returns undefined, cast to null
-		const categories = category?.textContent?.trim().substring(7).split(",").map((s) => s.trim()) ?? null
+		return category?.textContent?.trim().substring(7).split(",").map((s) => s.trim()) ?? null;
+	}
 
+	private static getDescription(doc: Document): string | null {
 		const description = doc.querySelector(descriptionId);
 		if (description === null) {
 			console.error("cannot find description");
 			return null;
 		}
 
+		return description?.textContent;
+	}
+
+	private static getSubscribed(doc: Document): boolean | null {
 		const subscribed = doc.querySelector(subscribeButtonId);
 		if (subscribed === null || subscribed?.classList.length === 0) {
 			console.error("cannot find subscribe button");
 			return null;
 		}
-
-		// TODO: DEBUG
-		console.log("category: " + category?.textContent?.trim());
-		console.log("description: " + description);
-		console.log("subscribed: " + subscribed);
-
-		return new WorkshopItem(description?.textContent, categories, subscribed?.classList.contains("toggled"));
-	}
-	static parseCollection(doc: Document): WorkshopItem[] | null {
-		doc
-		return null;
+		return subscribed?.classList.contains("toggled");
 	}
 }
 
