@@ -13,17 +13,14 @@ function injectSpecialSubButton() {
 	specialSubButton.addEventListener("click", onClickSpecialSub);
 }
 
-function onClickSpecialSub() {
-	const item = Parser.parseSingleItem(document);
-	console.log(item);
-}
-
 class WorkshopItem {
+	readonly id: string;
 	readonly description: string | null;
 	readonly category: string[] | null;
 	readonly subscribed: boolean;
 
-	constructor(description: string | null, category: string[] | null, subscribed: boolean) {
+	constructor(id: string, description: string | null, category: string[] | null, subscribed: boolean) {
+		this.id = id;
 		this.description = description;
 		this.category = category;
 		this.subscribed = subscribed;
@@ -36,6 +33,11 @@ class WorkshopItem {
  */
 class Parser {
 	static parseSingleItem(doc: Document): WorkshopItem | null {
+		const id = new URL(doc.URL).searchParams.get("id");
+		if (id === null) {
+			console.error("id cannot be null");
+			return null;
+		}
 		const categories = this.getCategories(doc);
 		const description = this.getDescription(doc);
 		const subscribed = this.getSubscribed(doc);
@@ -49,13 +51,8 @@ class Parser {
 		console.log("description: " + description);
 		console.log("subscribed: " + subscribed);
 
-		return new WorkshopItem(description, categories, subscribed);
+		return new WorkshopItem(id, description, categories, subscribed);
 	}
-	/*
-	static parseCollection(doc: Document): WorkshopItem[] | null {
-		doc
-		return null;
-	}*/
 
 	// If no categories are defined, return null. If no source of the categories if found, return undefined.
 	private static getCategories(doc: Document): string[] | null {
@@ -92,6 +89,7 @@ class Parser {
 /**
  * Tagger receives objects of type WorkshopItem and tries to assign them one or more tags.
  */
+/*
 class Tagger {
 	readonly config: any;
 
@@ -100,9 +98,8 @@ class Tagger {
 	}
 
 	static tagSingleItem(item: WorkshopItem) : string | null {
-		if (!item.subscribed) {
-			// Do stuff, filter out subscribed items before calling methods
-		}
+
+
 		return null;
 	}
 
@@ -110,10 +107,21 @@ class Tagger {
 		items.length
 		return null;
 	}
+}*/
+
+
+async function sendToBackground(item: WorkshopItem[]) {
+	await browser.runtime.sendMessage({msg: item});
+}
+
+function onClickSpecialSub() {
+	const item = Parser.parseSingleItem(document);
+	// TODO: Debug
+	console.log(item);
+	if (item !== null) {
+		Promise.resolve(sendToBackground([item])).then();
+	}
 }
 
 // TODO: Check which page are currently on and dispatch accordingly
 injectSpecialSubButton();
-
-
-
