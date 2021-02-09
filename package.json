@@ -10,7 +10,7 @@
 		"release:firefox": "cd distribution && web-ext-submit",
 		"test": "run-s lint:* build",
 		"watch": "webpack --mode=development --watch",
-	  	"start": "cd distribution && web-ext run --firefox firefox-developer-edition"
+		"start": "cd distribution && web-ext run --firefox firefox-developer-edition"
 	},
 	"xo": {
 		"envs": [
