@@ -2,9 +2,14 @@
   "extends": "@sindresorhus/tsconfig",
   "compilerOptions": {
 	"target": "es2018",
+	"lib": ["es6", "dom"],
+	"strict": true,
 	"declaration": false,
 	"noImplicitAny": false,
-	"allowUnusedLabels": true
+	"noImplicitThis": true,
+	"strictNullChecks": true,
+	"allowUnusedLabels": true,
+
   },
   "include": [
 	"source"

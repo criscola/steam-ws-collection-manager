@@ -8,7 +8,8 @@ module.exports = {
 	stats: 'errors-only',
 	entry: {
 		background: './source/background',
-		content: './source/content'
+		content: './source/content',
+		options: './source/options'
 	},
 	output: {
 		path: path.resolve(__dirname, 'distribution'),

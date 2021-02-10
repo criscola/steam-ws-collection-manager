@@ -2,12 +2,12 @@
 	"name": "Steam Workshop Collection Manager",
 	"version": "0.0.1",
 	"description": "Firefox / Chrome addon which enables you to manage your Steam Workshop collections in an easier way.",
-	"homepage_url": "https://github.com/awesome-templates/browser-extension-template",
+	"homepage_url": "https://github.com/criscola/steam-ws-collection-manager",
 	"manifest_version": 2,
 	"minimum_chrome_version": "74",
 	"applications": {
 		"gecko": {
-			"id": "awesome-extension@notlmn.github.io",
+			"id": "addon@example.com",
 			"strict_min_version": "67.0"
 		}
 	},
@@ -16,8 +16,13 @@
 	},
 	"permissions": [
 	  "*://steamcommunity.com/*",
-	  "cookies"
+	  "cookies",
+	  "storage"
 	],
+	"options_ui": {
+	  "chrome_style": true,
+	  "page": "options-placeholder.html"
+	},
 	"content_scripts": [
 	  {
 		"matches": ["https://steamcommunity.com/sharedfiles/filedetails/*"],
