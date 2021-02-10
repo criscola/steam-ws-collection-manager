@@ -1,3 +1,5 @@
+import {MDCTextField} from '@material/textfield';
+
 function saveOptions(e) {
 	e.preventDefault();
 	const p = Promise.resolve(browser.storage.sync.set({
@@ -18,9 +20,18 @@ function restoreOptions() {
 	getting.then(setCurrentChoice, onError);
 }
 
-document.addEventListener("DOMContentLoaded", restoreOptions);
-document.querySelector("form")?.addEventListener("submit", saveOptions);
+function initOptions() {
+	restoreOptions();
 
+	// Init Material UI components
+	const inputElement = document.querySelector<HTMLInputElement>('.mdc-text-field')!;
+	const inputMdc = new MDCTextField(inputElement);
+	console.log(inputMdc);
+
+	document.querySelector("form")?.addEventListener("submit", saveOptions);
+}
+
+document.addEventListener("DOMContentLoaded", initOptions);
 
 /*
 class Config {
