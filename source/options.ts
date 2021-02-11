@@ -1,4 +1,5 @@
 import {MDCTextField} from '@material/textfield';
+import {MDCRipple} from '@material/ripple';
 
 function saveOptions(e) {
 	e.preventDefault();
@@ -9,26 +10,32 @@ function saveOptions(e) {
 	p.then(() => console.log("Options synced to storage."));
 }
 
-function restoreOptions() {
-	let setCurrentChoice = (result) => {
+function initOptions() {
+	const setCurrentValues = (result) => {
 		document.querySelector<HTMLInputElement>('#color')!.value = result.color || "blue";
 	}
-	let onError = (error) => {
-		console.log(`Error: ${error}`);
+	const onErrorSetCurrentValues = (error) => {
+		console.error(`Error initializing current values: ${error}`);
 	}
-	let getting = browser.storage.sync.get("color");
-	getting.then(setCurrentChoice, onError);
-}
+	const initHtml = () => {
+		// Init Material UI components
+		new MDCTextField(document.querySelector<HTMLInputElement>('.mdc-text-field')!);
+		new MDCRipple(document.querySelector('.mdc-button')!);
+	}
+	const onErrorInitHtml = (error) => {
+		console.error(`Error initializing HTML: ${error}`);
+	}
+	const initEventListeners = () => {
+		document.querySelector("form")?.addEventListener("submit", saveOptions);
+	}
+	const onErrorInitEventListeners = (error) => {
+		console.error(`Error initializing current values: ${error}`);
+	}
 
-function initOptions() {
-	restoreOptions();
-
-	// Init Material UI components
-	const inputElement = document.querySelector<HTMLInputElement>('.mdc-text-field')!;
-	const inputMdc = new MDCTextField(inputElement);
-	console.log(inputMdc);
-
-	document.querySelector("form")?.addEventListener("submit", saveOptions);
+	const getting = browser.storage.sync.get("color");
+	getting.then(setCurrentValues, onErrorSetCurrentValues)
+		.then(initHtml, onErrorInitHtml)
+		.then(initEventListeners, onErrorInitEventListeners);
 }
 
 document.addEventListener("DOMContentLoaded", initOptions);
