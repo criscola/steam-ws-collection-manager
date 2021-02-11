@@ -1,25 +1,31 @@
 import Cookie = browser.cookies.Cookie;
 class SteamApi {
-	private static readonly APP_ID: "255710";
-
 	static async SubscribeToSingleItem(id: string): Promise<Response> {
 		const sessionId = await this.getSessionId();
 		if (sessionId === null) {
 			console.error("could not find sessionid in cookies");
 			throw new Error("sessionid cannot be null");
 		}
-		const rawBody = this.formatRequestBody(id, sessionId);
 
 		return fetch("https://steamcommunity.com/sharedfiles/subscribe", {
 			method: 'POST',
 			headers: this.getBaseHeaders(),
-			body: rawBody,
+			body: new URLSearchParams({
+				'id': id,
+				'appid': this.getAppId(),
+				'sessionid': sessionId
+			}),
 			redirect: 'follow'
 		});
 	}
 
-	static SubscribeToCollection() {
-
+	static async SubscribeToCollection() {
+		// https://steamcommunity.com/sharedfiles/ajaxaddtocollections
+		const sessionId = await this.getSessionId();
+		if (sessionId === null) {
+			console.error("could not find sessionid in cookies");
+			throw new Error("sessionid cannot be null");
+		}
 	}
 
 	static ListCollections() {
@@ -35,46 +41,16 @@ class SteamApi {
 		myHeaders.append("Connection", "keep-alive");
 		return myHeaders;
 	}
-	/*
-	private static getBaseRequest(method: string, body: string): Request {
-		let baseHeaders = this.getBaseHeaders();
 
-		return new Request("https://steamcommunity.com/sharedfiles/subscribe", {
-			method: method,
-			headers: baseHeaders,
-			body: body,
-			redirect: 'follow',
-		});
-	}*/
+	private static getAppId(): string {
+		return "255710";
+	}
 
 	private static async getSessionId(): Promise<string | null> {
 		const cookies = await getCookies();
 		console.log(cookies);
 		return cookies.find(i => i.name === "sessionid")?.value ?? null;
 	}
-
-	private static formatRequestBody(itemId: string, sessionId: string): string {
-		return "id="+itemId+"&appid="+SteamApi.APP_ID+"&sessionid="+sessionId;
-
-	}
-
-	/*
-	private static getItemIdFromUrl(url: string) {
-		const urlObj = new URL(url);
-		return urlObj.searchParams.get("id");
-	}*/
-
-	/*
-	private static formatCookieHeader(cookies: Cookie[]): string {
-		let cookiesHeader = "";
-		for (let cookie: Cookie in cookies) {
-			cookiesHeader += `${cookie.name}:${cookie.value}; `
-			// Needed in request body
-			if (cookie.name === "sessionid") {
-				sessionId = cookie.value
-			}
-		}
-	}*/
 }
 
 async function getCookies() {
@@ -85,12 +61,7 @@ async function getCookies() {
 function handleMessage(request, _, sendResponse) {
 	console.log("Message from the content script: ");
 	console.log(request.msg[0].id);
-	/*
-	Promise.resolve(SteamApi.SubscribeToSingleItem(request.msg[0].id))
-		.then(response => response.text())
-		.then(result => console.log(result))
-		.catch(error => console.log('error', error));
-	*/
+
 	SteamApi.SubscribeToSingleItem(request.msg[0].id)
 		.then(response => response.text())
 		.then(result => console.log(result))
