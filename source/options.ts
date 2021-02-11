@@ -1,10 +1,13 @@
-import {MDCTextField} from '@material/textfield';
-import {MDCRipple} from '@material/ripple';
+import { MDCTextField } from '@material/textfield';
+import { MDCRipple } from '@material/ripple';
+import { Config } from "./options-storage";
 
 function saveOptions(e) {
 	e.preventDefault();
+
 	const p = Promise.resolve(browser.storage.sync.set({
-		color: document.querySelector<HTMLInputElement>('#color')!.value
+		// TODO: Add way to add multiple full collections. Note: parametrize, another similar list will be needed
+		[Config.fullCollections]: [document.querySelector<HTMLInputElement>('#full-collection')!.value]
 	}));
 
 	p.then(() => console.log("Options synced to storage."));
@@ -12,7 +15,7 @@ function saveOptions(e) {
 
 function initOptions() {
 	const setCurrentValues = (result) => {
-		document.querySelector<HTMLInputElement>('#color')!.value = result.color || "blue";
+		document.querySelector<HTMLInputElement>('#full-collection')!.value = result.fullCollections[0];
 	}
 	const onErrorSetCurrentValues = (error) => {
 		console.error(`Error initializing current values: ${error}`);
@@ -32,7 +35,7 @@ function initOptions() {
 		console.error(`Error initializing current values: ${error}`);
 	}
 
-	const getting = browser.storage.sync.get("color");
+	const getting = browser.storage.sync.get(Config.fullCollections);
 	getting.then(setCurrentValues, onErrorSetCurrentValues)
 		.then(initHtml, onErrorInitHtml)
 		.then(initEventListeners, onErrorInitEventListeners);
@@ -40,19 +43,3 @@ function initOptions() {
 
 document.addEventListener("DOMContentLoaded", initOptions);
 
-/*
-class Config {
-	private standardCollections: Record<string, string>;
-	private customCollections: Record<string, string>;
-	private fullCollections: Record<string, string>;
-
-	constructor(standardCollections: Record<string, string>,
-				customCollections: Record<string, string>,
-				fullCollections: Record<string, string>) {
-		this.standardCollections = standardCollections;
-		this.customCollections = customCollections;
-		this.fullCollections = fullCollections;
-		// Should be built from data of the user
-	}
-}
-*/
